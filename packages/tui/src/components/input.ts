@@ -23,7 +23,6 @@ export class Input implements Component, Focusable {
 
 	/** Focusable interface - set by TUI when focus changes */
 	focused: boolean = false;
-	appFocused: boolean = true;
 
 	// Bracketed paste mode buffering
 	private pasteBuffer: string = "";
@@ -46,7 +45,7 @@ export class Input implements Component, Focusable {
 	}
 
 	private renderCursorCell(cell: string): string {
-		return this.appFocused ? `\x1b[7m${cell}\x1b[27m` : `\x1b[4m${cell}\x1b[24m`;
+		return `\x1b[7m${cell}\x1b[27m`;
 	}
 
 	handleInput(data: string): void {
@@ -491,8 +490,14 @@ export class Input implements Component, Focusable {
 		const atCursor = cursorGrapheme?.segment ?? " "; // Character at cursor, or space if at end
 		const afterCursor = visibleText.slice(cursorDisplay + atCursor.length);
 
+		if (!this.focused) {
+			const visualLength = visibleWidth(visibleText);
+			const padding = " ".repeat(Math.max(0, availableWidth - visualLength));
+			return [prompt + visibleText + padding];
+		}
+
 		// Hardware cursor marker (zero-width, emitted before fake cursor for IME positioning)
-		const marker = this.focused ? CURSOR_MARKER : "";
+		const marker = CURSOR_MARKER;
 
 		const cursorChar = this.renderCursorCell(atCursor);
 		const textWithCursor = beforeCursor + marker + cursorChar + afterCursor;

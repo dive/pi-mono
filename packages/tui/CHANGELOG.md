@@ -8,7 +8,7 @@
 
 ### Fixed
 
-- Fixed focused editor and input cursors to render an inactive underline style instead of the active block style when the terminal reports focus loss.
+- Fixed focused editor and input cursors to hide the fake cursor when the terminal reports focus loss.
 
 ## [0.67.68] - 2026-04-17
 

@@ -1081,20 +1081,12 @@ class LabelInput implements Component, Focusable {
 
 	// Focusable implementation - propagate to input for IME cursor positioning
 	private _focused = false;
-	private _appFocused = true;
 	get focused(): boolean {
 		return this._focused;
 	}
 	set focused(value: boolean) {
 		this._focused = value;
 		this.input.focused = value;
-	}
-	get appFocused(): boolean {
-		return this._appFocused;
-	}
-	set appFocused(value: boolean) {
-		this._appFocused = value;
-		this.input.appFocused = value;
 	}
 
 	constructor(entryId: string, currentLabel: string | undefined) {
@@ -1147,7 +1139,6 @@ export class TreeSelectorComponent extends Container implements Focusable {
 
 	// Focusable implementation - propagate to labelInput when active for IME cursor positioning
 	private _focused = false;
-	private _appFocused = true;
 	get focused(): boolean {
 		return this._focused;
 	}
@@ -1156,15 +1147,6 @@ export class TreeSelectorComponent extends Container implements Focusable {
 		// Propagate to labelInput when it's active
 		if (this.labelInput) {
 			this.labelInput.focused = value;
-		}
-	}
-	get appFocused(): boolean {
-		return this._appFocused;
-	}
-	set appFocused(value: boolean) {
-		this._appFocused = value;
-		if (this.labelInput) {
-			this.labelInput.appFocused = value;
 		}
 	}
 
@@ -1228,9 +1210,8 @@ export class TreeSelectorComponent extends Container implements Focusable {
 		};
 		this.labelInput.onCancel = () => this.hideLabelInput();
 
-		// Propagate current focus state to the new labelInput
+		// Propagate current focused state to the new labelInput
 		this.labelInput.focused = this._focused;
-		this.labelInput.appFocused = this._appFocused;
 
 		this.treeContainer.clear();
 		this.labelInputContainer.clear();

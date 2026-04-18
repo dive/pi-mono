@@ -223,7 +223,6 @@ export class Editor implements Component, Focusable {
 
 	/** Focusable interface - set by TUI when focus changes */
 	focused: boolean = false;
-	appFocused: boolean = true;
 
 	protected tui: TUI;
 	private theme: EditorTheme;
@@ -255,7 +254,7 @@ export class Editor implements Component, Focusable {
 	private pasteCounter: number = 0;
 
 	private renderCursorCell(cell: string): string {
-		return this.appFocused ? `\x1b[7m${cell}\x1b[0m` : `\x1b[4m${cell}\x1b[24m`;
+		return `\x1b[7m${cell}\x1b[0m`;
 	}
 
 	// Bracketed paste mode buffering
@@ -469,7 +468,8 @@ export class Editor implements Component, Focusable {
 
 		// Render each visible layout line
 		// Emit hardware cursor marker only when focused and not showing autocomplete
-		const emitCursorMarker = this.focused && !this.autocompleteState;
+		const showCursor = this.focused;
+		const emitCursorMarker = showCursor && !this.autocompleteState;
 
 		for (const layoutLine of visibleLines) {
 			let displayText = layoutLine.text;
@@ -477,7 +477,7 @@ export class Editor implements Component, Focusable {
 			let cursorInPadding = false;
 
 			// Add cursor if this line has it
-			if (layoutLine.hasCursor && layoutLine.cursorPos !== undefined) {
+			if (showCursor && layoutLine.hasCursor && layoutLine.cursorPos !== undefined) {
 				const before = displayText.slice(0, layoutLine.cursorPos);
 				const after = displayText.slice(layoutLine.cursorPos);
 

@@ -4,7 +4,7 @@
 
 ### Fixed
 
-- Fixed the interactive cursor to render an inactive underline style when the terminal or tmux pane loses focus and forwards focus events.
+- Fixed the interactive cursor to hide the fake cursor when the terminal or tmux pane loses focus and forwards focus events.
 
 ## [0.67.68] - 2026-04-17
 

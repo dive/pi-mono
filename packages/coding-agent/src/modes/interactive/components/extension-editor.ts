@@ -30,20 +30,12 @@ export class ExtensionEditorComponent extends Container implements Focusable {
 	private keybindings: KeybindingsManager;
 
 	private _focused = false;
-	private _appFocused = true;
 	get focused(): boolean {
 		return this._focused;
 	}
 	set focused(value: boolean) {
 		this._focused = value;
 		this.editor.focused = value;
-	}
-	get appFocused(): boolean {
-		return this._appFocused;
-	}
-	set appFocused(value: boolean) {
-		this._appFocused = value;
-		this.editor.appFocused = value;
 	}
 
 	constructor(
