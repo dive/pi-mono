@@ -254,7 +254,7 @@ export class Editor implements Component, Focusable {
 	private pasteCounter: number = 0;
 
 	private renderCursorCell(cell: string): string {
-		return `\x1b[7m${cell}\x1b[0m`;
+		return `\x1b[7m${cell}\x1b[27m`;
 	}
 
 	// Bracketed paste mode buffering
