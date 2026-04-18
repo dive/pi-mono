@@ -10,8 +10,8 @@ const cjsRequire = createRequire(import.meta.url);
  * Minimal terminal interface for TUI
  */
 export interface Terminal {
-	// Start the terminal with input and resize handlers
-	start(onInput: (data: string) => void, onResize: () => void): void;
+	// Start the terminal with input, resize, and focus handlers
+	start(onInput: (data: string) => void, onResize: () => void, onFocusChange: (focused: boolean) => void): void;
 
 	// Stop the terminal and restore state
 	stop(): void;
@@ -57,8 +57,10 @@ export class ProcessTerminal implements Terminal {
 	private wasRaw = false;
 	private inputHandler?: (data: string) => void;
 	private resizeHandler?: () => void;
+	private focusHandler?: (focused: boolean) => void;
 	private _kittyProtocolActive = false;
 	private _modifyOtherKeysActive = false;
+	private _focusReportingActive = false;
 	private stdinBuffer?: StdinBuffer;
 	private stdinDataHandler?: (data: string) => void;
 	private writeLogPath = (() => {
@@ -80,9 +82,10 @@ export class ProcessTerminal implements Terminal {
 		return this._kittyProtocolActive;
 	}
 
-	start(onInput: (data: string) => void, onResize: () => void): void {
+	start(onInput: (data: string) => void, onResize: () => void, onFocusChange: (focused: boolean) => void): void {
 		this.inputHandler = onInput;
 		this.resizeHandler = onResize;
+		this.focusHandler = onFocusChange;
 
 		// Save previous state and enable raw mode
 		this.wasRaw = process.stdin.isRaw || false;
@@ -94,6 +97,8 @@ export class ProcessTerminal implements Terminal {
 
 		// Enable bracketed paste mode - terminal will wrap pastes in \x1b[200~ ... \x1b[201~
 		process.stdout.write("\x1b[?2004h");
+		process.stdout.write("\x1b[?1004h");
+		this._focusReportingActive = true;
 
 		// Set up resize handler immediately
 		process.stdout.on("resize", this.resizeHandler);
@@ -132,6 +137,14 @@ export class ProcessTerminal implements Terminal {
 
 		// Forward individual sequences to the input handler
 		this.stdinBuffer.on("data", (sequence) => {
+			if (sequence === "\x1b[I") {
+				this.focusHandler?.(true);
+				return;
+			}
+			if (sequence === "\x1b[O") {
+				this.focusHandler?.(false);
+				return;
+			}
 			// Check for Kitty protocol response (only if not already enabled)
 			if (!this._kittyProtocolActive) {
 				const match = sequence.match(kittyResponsePattern);
@@ -263,6 +276,10 @@ export class ProcessTerminal implements Terminal {
 	stop(): void {
 		// Disable bracketed paste mode
 		process.stdout.write("\x1b[?2004l");
+		if (this._focusReportingActive) {
+			process.stdout.write("\x1b[?1004l");
+			this._focusReportingActive = false;
+		}
 
 		// Disable Kitty keyboard protocol if not already done by drainInput()
 		if (this._kittyProtocolActive) {
@@ -287,6 +304,7 @@ export class ProcessTerminal implements Terminal {
 			this.stdinDataHandler = undefined;
 		}
 		this.inputHandler = undefined;
+		this.focusHandler = undefined;
 		if (this.resizeHandler) {
 			process.stdout.removeListener("resize", this.resizeHandler);
 			this.resizeHandler = undefined;

@@ -232,6 +232,7 @@ export class TUI extends Container {
 	private hardwareCursorRow = 0; // Actual terminal cursor row (may differ due to IME positioning)
 	private showHardwareCursor = process.env.PI_HARDWARE_CURSOR === "1";
 	private clearOnShrink = process.env.PI_CLEAR_ON_SHRINK === "1"; // Clear empty rows when content shrinks (default: off)
+	private appFocused = true;
 	private maxLinesRendered = 0; // Track terminal's working area (max lines ever rendered)
 	private previousViewportTop = 0; // Track previous viewport top for resize-aware cursor moves
 	private fullRedrawCount = 0;
@@ -420,6 +421,7 @@ export class TUI extends Container {
 		this.terminal.start(
 			(data) => this.handleInput(data),
 			() => this.requestRender(),
+			(focused) => this.setAppFocused(focused),
 		);
 		this.terminal.hideCursor();
 		this.queryCellSize();
@@ -431,6 +433,16 @@ export class TUI extends Container {
 		return () => {
 			this.inputListeners.delete(listener);
 		};
+	}
+
+	getAppFocused(): boolean {
+		return this.appFocused;
+	}
+
+	private setAppFocused(focused: boolean): void {
+		if (this.appFocused === focused) return;
+		this.appFocused = focused;
+		this.requestRender();
 	}
 
 	removeInputListener(listener: InputListener): void {
