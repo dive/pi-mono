@@ -4,7 +4,14 @@ import { decodeKittyPrintable, matchesKey } from "../keys.js";
 import { KillRing } from "../kill-ring.js";
 import { type Component, CURSOR_MARKER, type Focusable, type TUI } from "../tui.js";
 import { UndoStack } from "../undo-stack.js";
-import { getSegmenter, isPunctuationChar, isWhitespaceChar, truncateToWidth, visibleWidth } from "../utils.js";
+import {
+	getSegmenter,
+	isPunctuationChar,
+	isWhitespaceChar,
+	renderCursorCell,
+	truncateToWidth,
+	visibleWidth,
+} from "../utils.js";
 import { SelectList, type SelectListLayoutOptions, type SelectListTheme } from "./select-list.js";
 
 const baseSegmenter = getSegmenter();
@@ -253,10 +260,6 @@ export class Editor implements Component, Focusable {
 	private pastes: Map<number, string> = new Map();
 	private pasteCounter: number = 0;
 
-	private renderCursorCell(cell: string): string {
-		return `\x1b[7m${cell}\x1b[27m`;
-	}
-
 	// Bracketed paste mode buffering
 	private pasteBuffer: string = "";
 	private isInPaste: boolean = false;
@@ -490,12 +493,12 @@ export class Editor implements Component, Focusable {
 					const afterGraphemes = [...this.segment(after)];
 					const firstGrapheme = afterGraphemes[0]?.segment || "";
 					const restAfter = after.slice(firstGrapheme.length);
-					const cursor = this.renderCursorCell(firstGrapheme);
+					const cursor = renderCursorCell(firstGrapheme);
 					displayText = before + marker + cursor + restAfter;
 					// lineVisibleWidth stays the same - we're replacing, not adding
 				} else {
 					// Cursor is at the end - add highlighted space
-					const cursor = this.renderCursorCell(" ");
+					const cursor = renderCursorCell(" ");
 					displayText = before + marker + cursor;
 					lineVisibleWidth = lineVisibleWidth + 1;
 					// If cursor overflows content width into the padding, flag it

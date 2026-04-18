@@ -11,6 +11,14 @@ export function getSegmenter(): Intl.Segmenter {
 }
 
 /**
+ * Render a single cell with reverse video for the software cursor.
+ * Uses ESC[27m to reset only the reverse attribute, preserving other styling.
+ */
+export function renderCursorCell(cell: string): string {
+	return `\x1b[7m${cell}\x1b[27m`;
+}
+
+/**
  * Check if a grapheme cluster (after segmentation) could possibly be an RGI emoji.
  * This is a fast heuristic to avoid the expensive rgiEmojiRegex test.
  * The tested Unicode blocks are deliberately broad to account for future
