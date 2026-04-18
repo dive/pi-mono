@@ -97,6 +97,7 @@ export class ProcessTerminal implements Terminal {
 
 		// Enable bracketed paste mode - terminal will wrap pastes in \x1b[200~ ... \x1b[201~
 		process.stdout.write("\x1b[?2004h");
+		// Enable focus reporting - terminal will send \x1b[I on focus in and \x1b[O on focus out
 		process.stdout.write("\x1b[?1004h");
 		this._focusReportingActive = true;
 
@@ -137,10 +138,12 @@ export class ProcessTerminal implements Terminal {
 
 		// Forward individual sequences to the input handler
 		this.stdinBuffer.on("data", (sequence) => {
+			// Focus in report: CSI I
 			if (sequence === "\x1b[I") {
 				this.focusHandler?.(true);
 				return;
 			}
+			// Focus out report: CSI O
 			if (sequence === "\x1b[O") {
 				this.focusHandler?.(false);
 				return;
@@ -277,6 +280,7 @@ export class ProcessTerminal implements Terminal {
 		// Disable bracketed paste mode
 		process.stdout.write("\x1b[?2004l");
 		if (this._focusReportingActive) {
+			// Disable focus reporting: stop terminal focus in/out events
 			process.stdout.write("\x1b[?1004l");
 			this._focusReportingActive = false;
 		}
