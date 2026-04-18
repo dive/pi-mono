@@ -2,10 +2,6 @@
 
 ## [Unreleased]
 
-### Fixed
-
-- Fixed the interactive cursor to hide the fake cursor when the terminal or tmux pane loses focus and forwards focus events.
-
 ## [0.67.68] - 2026-04-17
 
 ## [0.67.67] - 2026-04-17
