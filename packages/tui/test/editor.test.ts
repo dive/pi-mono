@@ -650,6 +650,7 @@ describe("Editor component", () => {
 			const editor = new Editor(createTestTUI(), defaultEditorTheme);
 			const width = 20;
 
+			editor.focused = true;
 			editor.setText("A✅B");
 			// Cursor should be at end (after B)
 			const lines = editor.render(width);
@@ -681,6 +682,7 @@ describe("Editor component", () => {
 			const width = 10;
 			for (const paddingX of [0, 1]) {
 				const editor = new Editor(createTestTUI(width + paddingX), defaultEditorTheme, { paddingX });
+				editor.focused = true;
 
 				// Type 9 chars → fills layoutWidth exactly, cursor at end on same line
 				for (const ch of "aaaaaaaaa") editor.handleInput(ch);
