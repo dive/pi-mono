@@ -55,9 +55,9 @@ Without tmux extended keys, modified Enter keys collapse to legacy sequences:
 
 This affects the default keybindings (`Enter` to submit, `Shift+Enter` for newline) and any custom keybindings using modified Enter.
 
-## Optional: Inactive Cursor in Unfocused Panes
+## Optional: Hide Cursor in Unfocused Panes
 
-Pi can render a weaker inactive cursor when the terminal or tmux pane loses focus. To forward pane focus changes to applications, add:
+Pi can hide its fake cursor when the terminal or tmux pane loses focus. To forward pane focus changes to applications, add:
 
 ```tmux
 set -g focus-events on
@@ -71,7 +71,7 @@ set -g extended-keys-format csi-u
 set -g focus-events on
 ```
 
-Without `focus-events`, Pi keeps the active cursor style even in unfocused tmux panes.
+Without `focus-events`, Pi keeps showing its fake cursor even in unfocused tmux panes.
 
 ## Requirements
 
