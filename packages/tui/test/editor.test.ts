@@ -663,6 +663,19 @@ describe("Editor component", () => {
 			assert.strictEqual(visibleWidth(contentLine), width);
 		});
 
+		it("hides cursor when appFocused is false", () => {
+			const editor = new Editor(createTestTUI(), defaultEditorTheme);
+			const width = 20;
+
+			editor.focused = true;
+			editor.appFocused = false;
+			editor.setText("hello");
+			const lines = editor.render(width);
+
+			const contentLine = lines[1]!;
+			assert.ok(!contentLine.includes("\x1b[7m"), "Should not have reverse video cursor when app is blurred");
+		});
+
 		it("does not exceed terminal width with emoji at wrap boundary", () => {
 			const editor = new Editor(createTestTUI(), defaultEditorTheme);
 			const width = 11;

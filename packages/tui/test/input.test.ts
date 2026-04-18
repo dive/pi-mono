@@ -68,6 +68,18 @@ describe("Input component", () => {
 			}
 		});
 
+		it("hides cursor when appFocused is false", () => {
+			const input = new Input();
+			const width = 20;
+			input.setValue("hello");
+			input.focused = true;
+			input.appFocused = false;
+
+			const [line] = input.render(width);
+			assert.ok(line);
+			assert.ok(!line.includes("\x1b[7m"), "Should not have reverse video cursor when app is blurred");
+		});
+
 		it("keeps the cursor visible when horizontally scrolling wide text", () => {
 			const input = new Input();
 			const width = 20;
