@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- Added terminal focus reporting plumbing and app-focus propagation so TUI components can react when the terminal or active pane loses focus.
+
+### Fixed
+
+- Fixed focused editor and input cursors to render an inactive underline style instead of the active block style when the terminal reports focus loss.
+
 ## [0.67.68] - 2026-04-17
 
 ## [0.67.67] - 2026-04-17
