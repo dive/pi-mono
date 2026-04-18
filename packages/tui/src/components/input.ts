@@ -482,30 +482,27 @@ export class Input implements Component, Focusable {
 		}
 
 		// Build line with fake cursor
-		// Insert cursor character at cursor position
-		const graphemes = [...segmenter.segment(visibleText.slice(cursorDisplay))];
-		const cursorGrapheme = graphemes[0];
+		// When unfocused, render the visible text as-is without the software cursor.
+		let renderedText = visibleText;
+		if (this.focused) {
+			// Insert cursor character at cursor position
+			const graphemes = [...segmenter.segment(visibleText.slice(cursorDisplay))];
+			const cursorGrapheme = graphemes[0];
 
-		const beforeCursor = visibleText.slice(0, cursorDisplay);
-		const atCursor = cursorGrapheme?.segment ?? " "; // Character at cursor, or space if at end
-		const afterCursor = visibleText.slice(cursorDisplay + atCursor.length);
+			const beforeCursor = visibleText.slice(0, cursorDisplay);
+			const atCursor = cursorGrapheme?.segment ?? " "; // Character at cursor, or space if at end
+			const afterCursor = visibleText.slice(cursorDisplay + atCursor.length);
 
-		if (!this.focused) {
-			const visualLength = visibleWidth(visibleText);
-			const padding = " ".repeat(Math.max(0, availableWidth - visualLength));
-			return [prompt + visibleText + padding];
+			// Hardware cursor marker (zero-width, emitted before fake cursor for IME positioning)
+			const marker = CURSOR_MARKER;
+			const cursorChar = this.renderCursorCell(atCursor); // ESC[7m = reverse video, ESC[27m = normal
+			renderedText = beforeCursor + marker + cursorChar + afterCursor;
 		}
 
-		// Hardware cursor marker (zero-width, emitted before fake cursor for IME positioning)
-		const marker = CURSOR_MARKER;
-
-		const cursorChar = this.renderCursorCell(atCursor);
-		const textWithCursor = beforeCursor + marker + cursorChar + afterCursor;
-
 		// Calculate visual width
-		const visualLength = visibleWidth(textWithCursor);
+		const visualLength = visibleWidth(renderedText);
 		const padding = " ".repeat(Math.max(0, availableWidth - visualLength));
-		const line = prompt + textWithCursor + padding;
+		const line = prompt + renderedText + padding;
 
 		return [line];
 	}
