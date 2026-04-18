@@ -30,6 +30,7 @@ export class Input implements Component, Focusable {
 
 	/** Focusable interface - set by TUI when focus changes */
 	focused: boolean = false;
+	appFocused?: boolean;
 
 	// Bracketed paste mode buffering
 	private pasteBuffer: string = "";
@@ -487,7 +488,7 @@ export class Input implements Component, Focusable {
 		// Build line with fake cursor
 		// When unfocused, render the visible text as-is without the software cursor.
 		let renderedText = visibleText;
-		if (this.focused) {
+		if (this.focused && this.appFocused !== false) {
 			// Insert cursor character at cursor position
 			const graphemes = [...segmenter.segment(visibleText.slice(cursorDisplay))];
 			const cursorGrapheme = graphemes[0];

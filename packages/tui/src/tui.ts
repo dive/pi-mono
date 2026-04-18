@@ -52,6 +52,8 @@ type InputListener = (data: string) => InputListenerResult;
 export interface Focusable {
 	/** Set by TUI when focus changes. Component should emit CURSOR_MARKER when true. */
 	focused: boolean;
+	/** Set by TUI when the terminal or pane loses/gains focus. Components should hide cursors when false. */
+	appFocused?: boolean;
 }
 
 /** Type guard to check if a component implements Focusable */
@@ -294,9 +296,9 @@ export class TUI extends Container {
 
 		this.focusedComponent = component;
 
-		// Set focused flag on new component only while the app is focused
+		// Set focused flag on new component
 		if (isFocusable(component)) {
-			component.focused = this.appFocused;
+			component.focused = true;
 		}
 	}
 
@@ -439,7 +441,7 @@ export class TUI extends Container {
 		if (this.appFocused === focused) return;
 		this.appFocused = focused;
 		if (isFocusable(this.focusedComponent)) {
-			this.focusedComponent.focused = focused;
+			this.focusedComponent.appFocused = focused;
 		}
 		this.requestRender();
 	}

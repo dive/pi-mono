@@ -230,6 +230,7 @@ export class Editor implements Component, Focusable {
 
 	/** Focusable interface - set by TUI when focus changes */
 	focused: boolean = false;
+	appFocused?: boolean;
 
 	protected tui: TUI;
 	private theme: EditorTheme;
@@ -471,7 +472,7 @@ export class Editor implements Component, Focusable {
 
 		// Render each visible layout line
 		// Emit hardware cursor marker only when focused and not showing autocomplete
-		const showCursor = this.focused;
+		const showCursor = this.focused && this.appFocused !== false;
 		const emitCursorMarker = showCursor && !this.autocompleteState;
 
 		for (const layoutLine of visibleLines) {
