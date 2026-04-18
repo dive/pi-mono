@@ -23,6 +23,7 @@ export class Input implements Component, Focusable {
 
 	/** Focusable interface - set by TUI when focus changes */
 	focused: boolean = false;
+	appFocused: boolean = true;
 
 	// Bracketed paste mode buffering
 	private pasteBuffer: string = "";

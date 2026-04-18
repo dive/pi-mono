@@ -54,9 +54,19 @@ export interface Focusable {
 	focused: boolean;
 }
 
+export interface AppFocusable {
+	/** Set by TUI when terminal or pane focus changes. */
+	appFocused: boolean;
+}
+
 /** Type guard to check if a component implements Focusable */
 export function isFocusable(component: Component | null): component is Component & Focusable {
 	return component !== null && "focused" in component;
+}
+
+/** Type guard to check if a component reacts to app focus changes */
+export function isAppFocusable(component: Component | null): component is Component & AppFocusable {
+	return component !== null && "appFocused" in component;
 }
 
 /**
@@ -291,12 +301,18 @@ export class TUI extends Container {
 		if (isFocusable(this.focusedComponent)) {
 			this.focusedComponent.focused = false;
 		}
+		if (isAppFocusable(this.focusedComponent)) {
+			this.focusedComponent.appFocused = false;
+		}
 
 		this.focusedComponent = component;
 
 		// Set focused flag on new component
 		if (isFocusable(component)) {
 			component.focused = true;
+		}
+		if (isAppFocusable(component)) {
+			component.appFocused = this.appFocused;
 		}
 	}
 
@@ -442,6 +458,9 @@ export class TUI extends Container {
 	private setAppFocused(focused: boolean): void {
 		if (this.appFocused === focused) return;
 		this.appFocused = focused;
+		if (isAppFocusable(this.focusedComponent)) {
+			this.focusedComponent.appFocused = focused;
+		}
 		this.requestRender();
 	}
 

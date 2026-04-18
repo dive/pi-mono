@@ -223,6 +223,7 @@ export class Editor implements Component, Focusable {
 
 	/** Focusable interface - set by TUI when focus changes */
 	focused: boolean = false;
+	appFocused: boolean = true;
 
 	protected tui: TUI;
 	private theme: EditorTheme;

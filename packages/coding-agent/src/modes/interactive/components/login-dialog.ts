@@ -18,12 +18,20 @@ export class LoginDialogComponent extends Container implements Focusable {
 
 	// Focusable implementation - propagate to input for IME cursor positioning
 	private _focused = false;
+	private _appFocused = true;
 	get focused(): boolean {
 		return this._focused;
 	}
 	set focused(value: boolean) {
 		this._focused = value;
 		this.input.focused = value;
+	}
+	get appFocused(): boolean {
+		return this._appFocused;
+	}
+	set appFocused(value: boolean) {
+		this._appFocused = value;
+		this.input.appFocused = value;
 	}
 
 	constructor(

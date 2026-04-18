@@ -188,12 +188,20 @@ class ResourceList implements Component, Focusable {
 	public onToggle?: (item: ResourceItem, newEnabled: boolean) => void;
 
 	private _focused = false;
+	private _appFocused = true;
 	get focused(): boolean {
 		return this._focused;
 	}
 	set focused(value: boolean) {
 		this._focused = value;
 		this.searchInput.focused = value;
+	}
+	get appFocused(): boolean {
+		return this._appFocused;
+	}
+	set appFocused(value: boolean) {
+		this._appFocused = value;
+		this.searchInput.appFocused = value;
 	}
 
 	constructor(groups: ResourceGroup[], settingsManager: SettingsManager, cwd: string, agentDir: string) {
@@ -546,12 +554,20 @@ export class ConfigSelectorComponent extends Container implements Focusable {
 	private resourceList: ResourceList;
 
 	private _focused = false;
+	private _appFocused = true;
 	get focused(): boolean {
 		return this._focused;
 	}
 	set focused(value: boolean) {
 		this._focused = value;
 		this.resourceList.focused = value;
+	}
+	get appFocused(): boolean {
+		return this._appFocused;
+	}
+	set appFocused(value: boolean) {
+		this._appFocused = value;
+		this.resourceList.appFocused = value;
 	}
 
 	constructor(
